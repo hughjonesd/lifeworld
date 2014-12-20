@@ -28,7 +28,7 @@ fakeLife <- function(excludeID) {
     mydist <- dist[i,]
     mynbr <- dfr
     mynbr$dist <- mydist
-    mynbr <- mynbr[! is.na(mynbr$dist) & mynbr$id != myid,]
+    mynbr <- mynbr[! is.na(mynbr$dist) & mynbr$id != myID,]
     mynbr <- mynbr[order(mynbr$dist),][1:8,]
     dfr$alive[i] <- sum(mynbr$alive)==3 || (! dfr$alive[i]) && sum(mynbr$alive)==2 
   }
