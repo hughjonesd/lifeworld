@@ -2,7 +2,6 @@
 library(shiny)
 library(leaflet)
 library(refset)
-library(dplyr)
 set.seed(100)
 
 minDist <- 100
@@ -27,8 +26,10 @@ fakeLife <- function(excludeID) {
     myID <- dfr$id[i]
     if (myID == excludeID) next
     mydist <- dist[i,]
-    mynbr <- dfr %>% mutate(dist=mydist) %>% filter(! is.na(dist) & 
-        id != myID) %>% arrange(dist) %>% slice(1:8)
+    mynbr <- dfr
+    mynbr$dist <- mydist
+    mynbr <- mynbr[! is.na(mynbr$dist) & mynbr$id != myid,]
+    mynbr <- mynbr[order(mynbr$dist),][1:8,]
     dfr$alive[i] <- sum(mynbr$alive)==3 || (! dfr$alive[i]) && sum(mynbr$alive)==2 
   }
   vars$dfr <- dfr
@@ -83,11 +84,12 @@ shinyServer(function(input, output, session) {
   
   neighbours <- reactive({
     if (is.na(rs$lat) || is.na(rs$long)) return(NULL)
-    dist <- as.matrix(dist(vars$dfr[,c("lat", "long")], diag=TRUE, upper=TRUE))
-    dist <- dist[which(vars$dfr$id==rs$id),]
-    nbrs <- vars$dfr %>% mutate(dist=dist) %>% filter(! is.na(dist) & 
-          dist < minDist & id != rs$id) %>% arrange(dist) %>% slice(1:9) %>% 
-          select(lat, long, alive)
+    mydist <- as.matrix(dist(vars$dfr[,c("lat", "long")], diag=TRUE, upper=TRUE))
+    mydist <- mydist[which(vars$dfr$id==rs$id),]
+    nbrs <- vars$dfr
+    nbrs$dist <- mydist
+    nbrs <- nbrs[!is.na(nbrs$dist) & nbrs$id != rs$id,]
+    nbrs <- nbrs[order(nbrs$dist),][1:8, c("lat", "long", "alive")]
     nbrs
   })
   
