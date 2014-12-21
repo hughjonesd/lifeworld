@@ -2,7 +2,6 @@
 library(shiny)
 library(leaflet)
 library(refset)
-set.seed(100)
 
 minDist <- 100
 mapTimeout <- 1000 * 10; # in millisecs
@@ -95,8 +94,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     nbrs <- neighbours() 
-    if (testing) invalidateLater(5000, session)
-    warning("sending nbrs", immediate. = TRUE)
+#    if (testing) invalidateLater(5000, session)
     if (! is.null(nbrs)) session$sendCustomMessage("neighbours", nbrs)
   })
   

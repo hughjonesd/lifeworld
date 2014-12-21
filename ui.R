@@ -4,7 +4,7 @@ library(leaflet)
 
 shinyUI(fluidPage(
     titlePanel("Lifeworld"),
-    div(class="outer",
+    mainPanel(div(class="outer",
        tags$head(
 #         # Include our custom CSS
          includeCSS("styles.css"),
@@ -18,5 +18,5 @@ shinyUI(fluidPage(
           zoom = 2
         )
       )
-    )
+    ))
 ))
